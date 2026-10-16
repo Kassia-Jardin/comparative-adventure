@@ -1,0 +1,1184 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>比较级大冒险 · Comparative Adventure</title>
+<style>
+  :root{
+    --bg:#FFF8E7; --card:#FFFFFF; --primary:#FF8A3D; --primary-dark:#E56A1F;
+    --green:#5BC98C; --green-dark:#3FA86E; --red:#FF6B6B; --blue:#5BA8E5;
+    --purple:#9B7EDE; --text:#3A2E22; --shadow:0 6px 0 rgba(0,0,0,0.12); --radius:22px;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;height:100%;}
+  body{font-family:"Comic Sans MS","Chalkboard SE","PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;}
+  header{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;background:var(--primary);box-shadow:0 4px 0 var(--primary-dark);position:sticky;top:0;z-index:100;}
+  header h1{margin:0;font-size:clamp(18px,3.5vw,26px);color:#fff;text-shadow:2px 2px 0 rgba(0,0,0,0.15);}
+  .nav-btns{display:flex;gap:8px;flex-wrap:wrap;}
+  .nav-btns button{font-family:inherit;font-size:clamp(12px,2vw,15px);padding:8px 14px;border:none;border-radius:14px;background:#fff;color:var(--primary-dark);font-weight:bold;cursor:pointer;box-shadow:0 3px 0 rgba(0,0,0,0.15);transition:transform .1s;}
+  .nav-btns button:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(0,0,0,0.15);}
+  .nav-btns button.active{background:var(--green);color:#fff;}
+  main{padding:20px;max-width:1000px;margin:0 auto;min-height:calc(100vh - 140px);}
+  .screen{display:none;animation:fadeIn .35s ease;}
+  .screen.active{display:block;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+  .card{background:var(--card);border-radius:var(--radius);padding:22px;margin-bottom:20px;box-shadow:var(--shadow);}
+  .card h2{margin:0 0 16px;font-size:clamp(20px,3.5vw,28px);color:var(--primary-dark);}
+  .home-hero{text-align:center;padding:30px 20px;}
+  .home-hero .big-title{font-size:clamp(26px,5vw,42px);color:var(--primary-dark);margin:10px 0;text-shadow:3px 3px 0 rgba(255,138,61,0.25);}
+  .home-hero .subtitle{font-size:clamp(14px,2.5vw,18px);color:#8A7A66;margin-bottom:24px;}
+  .menu-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-top:20px;}
+  .menu-btn{background:var(--card);border:none;border-radius:var(--radius);padding:22px 12px;cursor:pointer;font-family:inherit;box-shadow:var(--shadow);transition:transform .15s;display:flex;flex-direction:column;align-items:center;gap:8px;}
+  .menu-btn:active{transform:scale(0.96);}
+  .menu-btn .emoji{font-size:clamp(32px,6vw,48px);}
+  .menu-btn .label{font-size:clamp(14px,2.5vw,18px);font-weight:bold;color:var(--text);}
+  .menu-btn .desc{font-size:clamp(11px,1.8vw,13px);color:#9A8B78;}
+  .warmup-stage{display:flex;align-items:center;justify-content:center;gap:clamp(10px,3vw,40px);flex-wrap:wrap;margin:20px 0;}
+  .compare-item{display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;transition:transform .2s;}
+  .compare-item:hover{transform:scale(1.06);}
+  .compare-item .tag{font-size:clamp(12px,2vw,15px);font-weight:bold;color:#8A7A66;background:#F2E9DA;padding:4px 12px;border-radius:12px;}
+  .compare-item svg{width:clamp(90px,18vw,150px);height:auto;}
+  .vs-badge{font-size:clamp(18px,3vw,26px);font-weight:bold;color:var(--primary);background:#FFF0DF;border-radius:50%;width:clamp(46px,8vw,64px);height:clamp(46px,8vw,64px);display:flex;align-items:center;justify-content:center;}
+  .sentence-box{background:#FFF6E9;border-radius:18px;padding:16px 20px;font-size:clamp(16px,3vw,24px);text-align:center;line-height:1.6;color:var(--text);margin:16px 0;border:3px dashed #FFD9A8;}
+  .sentence-box .hl{color:var(--primary-dark);font-weight:bold;background:#FFE8C9;padding:0 6px;border-radius:8px;}
+  .controls{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:12px;}
+  .btn{font-family:inherit;font-size:clamp(14px,2.3vw,17px);font-weight:bold;padding:12px 22px;border:none;border-radius:16px;cursor:pointer;box-shadow:0 4px 0 rgba(0,0,0,0.15);transition:transform .1s;}
+  .btn:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,0.15);}
+  .btn-primary{background:var(--primary);color:#fff;}
+  .btn-green{background:var(--green);color:#fff;}
+  .btn-blue{background:var(--blue);color:#fff;}
+  .btn-gray{background:#D9CFC0;color:#6B5D4D;}
+  .progress-wrap{background:#F2E9DA;border-radius:12px;height:14px;overflow:hidden;margin:10px 0;}
+  .progress-bar{height:100%;background:linear-gradient(90deg,var(--green),var(--blue));width:0%;transition:width .4s;border-radius:12px;}
+  .progress-text{font-size:14px;color:#8A7A66;text-align:center;}
+  .question-box{background:#FFF6E9;border-radius:18px;padding:20px;font-size:clamp(18px,3.2vw,26px);text-align:center;line-height:1.6;margin-bottom:20px;border:3px dashed #FFD9A8;}
+  .question-box .blank{display:inline-block;min-width:70px;border-bottom:3px solid var(--primary);color:var(--primary-dark);font-weight:bold;}
+  .options-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:16px;justify-content:center;}
+  .option-card{background:#fff;border-radius:var(--radius);padding:16px;cursor:pointer;box-shadow:var(--shadow);transition:transform .15s;display:flex;flex-direction:column;align-items:center;gap:8px;border:4px solid transparent;}
+  .option-card:hover{transform:translateY(-4px);}
+  .option-card.correct{border-color:var(--green);background:#E8F8EE;}
+  .option-card.wrong{border-color:var(--red);background:#FFECEC;animation:shake .4s;}
+  @keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-8px);}75%{transform:translateX(8px);}}
+  .option-card .opt-label{font-size:clamp(13px,2vw,16px);font-weight:bold;color:var(--text);}
+  .reward-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:16px;margin-top:16px;}
+  .sticker{background:#fff;border-radius:20px;padding:16px;text-align:center;box-shadow:var(--shadow);opacity:0.25;filter:grayscale(1);transition:all .4s;}
+  .sticker.earned{opacity:1;filter:grayscale(0);transform:scale(1.05);}
+  .sticker .emoji{font-size:44px;}
+  .sticker .word{font-size:13px;font-weight:bold;color:var(--primary-dark);margin-top:6px;}
+  .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--primary-dark);color:#fff;padding:14px 28px;border-radius:18px;font-size:18px;font-weight:bold;box-shadow:0 6px 20px rgba(0,0,0,0.25);transition:transform .3s;z-index:999;pointer-events:none;}
+  .toast.show{transform:translateX(-50%) translateY(0);}
+  @media (max-width:600px){header{padding:10px 12px;}main{padding:12px;}.card{padding:16px;}}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🦕 比较级大冒险</h1>
+    <div class="nav-btns">
+    <button data-screen="home" class="active">🏠 首页</button>
+    <button data-screen="warmup">🔥 热身</button>
+    <button data-screen="game1">🎯 点一点</button>
+    <button data-screen="game2">🧩 拖一拖</button>
+    <button data-screen="game3">🎨 变一变</button>
+    <button data-screen="game4">🔊 说一说</button>
+    <button data-screen="challenge">🏁 闯关</button>
+    <button data-screen="reward">🏆 奖励</button>
+  </div>
+</header>
+
+<main>
+  <section id="screen-home" class="screen active">
+    <div class="card home-hero">
+      <div style="font-size:64px;">🦕 🍎 📏</div>
+      <div class="big-title">比较级大冒险</div>
+      <div class="subtitle">Comparative Adventure · 和大恐龙一起学比较！</div>
+            <div class="menu-grid">
+        <button class="menu-btn" onclick="go('warmup')"><span class="emoji">🔥</span><span class="label">热身动画</span><span class="desc">看一看，听一听</span></button>
+        <button class="menu-btn" onclick="go('game1')"><span class="emoji">🎯</span><span class="label">点一点</span><span class="desc">选出正确的单词</span></button>
+        <button class="menu-btn" onclick="go('game2')"><span class="emoji">🧩</span><span class="label">拖一拖</span><span class="desc">把单词拖进句子</span></button>
+        <button class="menu-btn" onclick="go('game3')"><span class="emoji">🎨</span><span class="label">变一变</span><span class="desc">选出正确的比较级</span></button>
+        <button class="menu-btn" onclick="go('game4')"><span class="emoji">🔊</span><span class="label">说一说</span><span class="desc">录音跟读</span></button>
+        <button class="menu-btn" onclick="go('challenge')"><span class="emoji">🏁</span><span class="label">闯关挑战</span><span class="desc">综合练习</span></button>
+        <button class="menu-btn" onclick="go('reward')"><span class="emoji">🏆</span><span class="label">我的奖励</span><span class="desc">收集贴纸</span></button>
+      </div>
+    </div>
+  </section>
+
+  <section id="screen-warmup" class="screen">
+    <div class="card">
+      <h2>🔥 热身动画</h2>
+      <div class="progress-wrap"><div class="progress-bar" id="warmup-progress"></div></div>
+      <div class="progress-text" id="warmup-progress-text">第 1 / 6 题</div>
+      <div class="warmup-stage" id="warmup-stage"></div>
+      <div class="sentence-box" id="warmup-sentence">点击图片听句子 👆</div>
+      <div class="controls">
+        <button class="btn btn-blue" onclick="speakCurrent()">🔊 再听一遍</button>
+        <button class="btn btn-gray" onclick="prevWarmup()">⬅️ 上一题</button>
+        <button class="btn btn-green" onclick="nextWarmup()">下一题 ➡️</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="screen-game1" class="screen">
+    <div class="card">
+      <h2>🎯 点一点 · Pick the Right One</h2>
+      <div class="progress-wrap"><div class="progress-bar" id="game1-progress"></div></div>
+      <div class="progress-text" id="game1-progress-text">第 1 / 8 题</div>
+      <div class="question-box" id="game1-question">加载中...</div>
+      <div class="options-grid" id="game1-options"></div>
+      <div class="controls" style="margin-top:20px;">
+        <button class="btn btn-blue" onclick="speakGame1()">🔊 听句子</button>
+        <button class="btn btn-gray" onclick="resetGame1()">🔄 重新开始</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="screen-reward" class="screen">
+    <div class="card">
+      <h2>🏆 我的奖励</h2>
+      <p style="font-size:16px;color:#8A7A66;">完成游戏就能收集贴纸哦！</p>
+      <div class="reward-grid" id="reward-grid"></div>
+      <div class="controls" style="margin-top:20px;">
+        <button class="btn btn-gray" onclick="resetRewards()">🔄 清空贴纸</button>
+      </div>
+    </div>
+  </section>
+
+    <!-- ========== G2 拖一拖 ========== -->
+  <section id="screen-game2" class="screen">
+    <div class="card">
+      <h2>🧩 拖一拖 · Drag & Match</h2>
+      <div class="progress-wrap"><div class="progress-bar" id="game2-progress"></div></div>
+      <div class="progress-text" id="game2-progress-text">第 1 / 6 题</div>
+
+      <div class="question-box" id="game2-question">加载中...</div>
+
+      <!-- 拖拽选项池 -->
+      <div id="game2-pool" style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:20px 0;"></div>
+
+      <!-- 句子填空区 -->
+      <div id="game2-sentence" style="background:#FFF6E9;border-radius:18px;padding:20px;font-size:clamp(16px,2.8vw,22px);text-align:center;line-height:2;border:3px dashed #FFD9A8;"></div>
+
+      <div class="controls" style="margin-top:20px;">
+        <button class="btn btn-blue" onclick="speakGame2()">🔊 听句子</button>
+        <button class="btn btn-gray" onclick="resetGame2()">🔄 重新开始</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== G3 变一变 ========== -->
+  <section id="screen-game3" class="screen">
+    <div class="card">
+      <h2>🎨 变一变 · Magic Compare</h2>
+      <div class="progress-wrap"><div class="progress-bar" id="game3-progress"></div></div>
+      <div class="progress-text" id="game3-progress-text">第 1 / 6 题</div>
+
+      <div class="question-box" id="game3-question">加载中...</div>
+      <div class="options-grid" id="game3-options"></div>
+
+      <div class="controls" style="margin-top:20px;">
+        <button class="btn btn-blue" onclick="speakGame3()">🔊 听句子</button>
+        <button class="btn btn-gray" onclick="resetGame3()">🔄 重新开始</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== G4 说一说 ========== -->
+  <section id="screen-game4" class="screen">
+    <div class="card">
+      <h2>🔊 说一说 · Say It Out Loud</h2>
+      <div class="progress-wrap"><div class="progress-bar" id="game4-progress"></div></div>
+      <div class="progress-text" id="game4-progress-text">第 1 / 5 题</div>
+
+      <div class="question-box" id="game4-question">加载中...</div>
+
+      <!-- 录音控制区 -->
+      <div class="controls" style="margin:20px 0;">
+        <button class="btn btn-blue" onclick="speakGame4()">🔊 听原句</button>
+        <button class="btn btn-green" id="game4-record-btn" onclick="toggleRecord()">🎤 开始录音</button>
+        <button class="btn btn-purple" id="game4-play-btn" onclick="playRecording()" disabled>▶️ 播放录音</button>
+      </div>
+
+      <div id="game4-status" style="text-align:center;font-size:15px;color:#8A7A66;margin-top:10px;"></div>
+
+      <div class="controls" style="margin-top:20px;">
+        <button class="btn btn-gray" onclick="resetGame4()">🔄 重新开始</button>
+        <button class="btn btn-green" onclick="nextGame4()">下一题 ➡️</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 闯关挑战 ========== -->
+  <section id="screen-challenge" class="screen">
+    <div class="card">
+      <h2>🏁 闯关挑战 · Challenge</h2>
+      <div class="progress-wrap"><div class="progress-bar" id="challenge-progress"></div></div>
+      <div class="progress-text" id="challenge-progress-text">第 1 / 10 题</div>
+
+      <div class="question-box" id="challenge-question">加载中...</div>
+      <div class="options-grid" id="challenge-options"></div>
+
+      <div class="controls" style="margin-top:20px;">
+        <button class="btn btn-blue" onclick="speakChallenge()">🔊 听句子</button>
+        <button class="btn btn-gray" onclick="resetChallenge()">🔄 重新开始</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<!-- ============ 脚本在第二条消息中 ============ -->
+<script>
+/* ============================================================
+   全局状态
+   ============================================================ */
+const state = {
+  warmupIndex: 0,
+  game1Index: 0,
+  game1Score: 0,
+  game1Answered: false,
+  game2Index: 0,
+  game3Index: 0,
+  game3Score: 0,
+  game3Answered: false,
+  game4Index: 0,
+  challengeIndex: 0,
+  challengeScore: 0,
+  challengeAnswered: false,
+  earnedStickers: JSON.parse(localStorage.getItem('comparative_stickers') || '[]'),
+};
+
+/* ============================================================
+   页面切换
+   ============================================================ */
+function go(name){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+name).classList.add('active');
+  document.querySelectorAll('.nav-btns button').forEach(b=>{
+    b.classList.toggle('active', b.dataset.screen===name);
+  });
+  if(name==='reward') renderRewards();
+  if(name==='warmup') renderWarmup();
+  if(name==='game1') renderGame1();
+}
+document.querySelectorAll('.nav-btns button').forEach(b=>{
+  b.addEventListener('click',()=>go(b.dataset.screen));
+});
+
+/* ============================================================
+   语音朗读
+   ============================================================ */
+function speak(text){
+  if(!('speechSynthesis' in window)) return;
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'en-US';
+  u.rate = 0.85;
+  u.pitch = 1.1;
+  window.speechSynthesis.speak(u);
+}
+
+/* ============================================================
+   Toast
+   ============================================================ */
+let toastTimer;
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 1500);
+}
+
+/* ============================================================
+   SVG 图形库（苹果、尺子、太阳、云朵）
+   ============================================================ */
+const SVG = {
+  redAppleBig: `<svg viewBox="0 0 100 100"><circle cx="50" cy="58" r="34" fill="#E53935"/><circle cx="42" cy="50" r="9" fill="#FF8A8A" opacity="0.6"/><rect x="47" y="18" width="6" height="14" fill="#8B5A2B" rx="2"/><ellipse cx="60" cy="22" rx="10" ry="6" fill="#5BC98C"/></svg>`,
+  greenAppleSmall: `<svg viewBox="0 0 100 100"><circle cx="50" cy="66" r="20" fill="#7CB342"/><circle cx="44" cy="60" r="5" fill="#C5E1A5" opacity="0.7"/><rect x="48" y="42" width="4" height="10" fill="#8B5A2B" rx="2"/><ellipse cx="58" cy="44" rx="7" ry="4" fill="#5BC98C"/></svg>`,
+
+  blueRulerLong: `<svg viewBox="0 0 140 60"><rect x="5" y="15" width="130" height="30" fill="#42A5F5" rx="6" stroke="#1565C0" stroke-width="3"/><g stroke="#0D47A1" stroke-width="2"><line x1="25" y1="15" x2="25" y2="28"/><line x1="45" y1="15" x2="45" y2="28"/><line x1="65" y1="15" x2="65" y2="28"/><line x1="85" y1="15" x2="85" y2="28"/><line x1="105" y1="15" x2="105" y2="28"/><line x1="125" y1="15" x2="125" y2="28"/></g></svg>`,
+  yellowRulerShort: `<svg viewBox="0 0 140 60"><rect x="5" y="15" width="65" height="30" fill="#FFD93D" rx="6" stroke="#E5B800" stroke-width="3"/><g stroke="#8B5A2B" stroke-width="2"><line x1="22" y1="15" x2="22" y2="28"/><line x1="40" y1="15" x2="40" y2="28"/><line x1="58" y1="15" x2="58" y2="28"/></g></svg>`,
+
+  twoRedApples: `<svg viewBox="0 0 140 100"><circle cx="45" cy="62" r="26" fill="#E53935"/><circle cx="38" cy="55" r="6" fill="#FF8A8A" opacity="0.6"/><rect x="42" y="32" width="5" height="12" fill="#8B5A2B" rx="2"/><ellipse cx="54" cy="34" rx="8" ry="5" fill="#5BC98C"/><circle cx="98" cy="66" r="22" fill="#E53935"/><circle cx="92" cy="60" r="5" fill="#FF8A8A" opacity="0.6"/><rect x="95" y="40" width="4" height="10" fill="#8B5A2B" rx="2"/><ellipse cx="105" cy="42" rx="7" ry="4" fill="#5BC98C"/></svg>`,
+  twoGreenApples: `<svg viewBox="0 0 140 100"><circle cx="45" cy="68" r="18" fill="#7CB342"/><circle cx="40" cy="62" r="4" fill="#C5E1A5" opacity="0.7"/><rect x="43" y="46" width="4" height="10" fill="#8B5A2B" rx="2"/><ellipse cx="51" cy="48" rx="6" ry="3.5" fill="#5BC98C"/><circle cx="98" cy="70" r="16" fill="#7CB342"/><circle cx="93" cy="65" r="4" fill="#C5E1A5" opacity="0.7"/><rect x="96" y="50" width="4" height="9" fill="#8B5A2B" rx="2"/><ellipse cx="104" cy="52" rx="6" ry="3.5" fill="#5BC98C"/></svg>`,
+
+  twoBlueRulersLong: `<svg viewBox="0 0 140 100"><rect x="5" y="20" width="130" height="22" fill="#42A5F5" rx="5" stroke="#1565C0" stroke-width="2.5"/><rect x="5" y="58" width="130" height="22" fill="#42A5F5" rx="5" stroke="#1565C0" stroke-width="2.5"/><g stroke="#0D47A1" stroke-width="1.5"><line x1="30" y1="20" x2="30" y2="32"/><line x1="60" y1="20" x2="60" y2="32"/><line x1="90" y1="20" x2="90" y2="32"/><line x1="120" y1="20" x2="120" y2="32"/><line x1="30" y1="58" x2="30" y2="70"/><line x1="60" y1="58" x2="60" y2="70"/><line x1="90" y1="58" x2="90" y2="70"/><line x1="120" y1="58" x2="120" y2="70"/></g></svg>`,
+  twoYellowRulersShort: `<svg viewBox="0 0 140 100"><rect x="5" y="20" width="65" height="22" fill="#FFD93D" rx="5" stroke="#E5B800" stroke-width="2.5"/><rect x="5" y="58" width="65" height="22" fill="#FFD93D" rx="5" stroke="#E5B800" stroke-width="2.5"/><g stroke="#8B5A2B" stroke-width="1.5"><line x1="25" y1="20" x2="25" y2="32"/><line x1="50" y1="20" x2="50" y2="32"/><line x1="25" y1="58" x2="25" y2="70"/><line x1="50" y1="58" x2="50" y2="70"/></g></svg>`,
+
+  sun: `<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="22" fill="#FFD93D"/><g stroke="#FFB800" stroke-width="4" stroke-linecap="round"><line x1="50" y1="12" x2="50" y2="22"/><line x1="50" y1="78" x2="50" y2="88"/><line x1="12" y1="50" x2="22" y2="50"/><line x1="78" y1="50" x2="88" y2="50"/><line x1="24" y1="24" x2="31" y2="31"/><line x1="69" y1="69" x2="76" y2="76"/><line x1="76" y1="24" x2="69" y2="31"/><line x1="31" y1="69" x2="24" y2="76"/></g><circle cx="43" cy="46" r="3" fill="#7A5A00"/><circle cx="57" cy="46" r="3" fill="#7A5A00"/><path d="M43 58 Q50 64 57 58" stroke="#7A5A00" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>`,
+
+  rainCloud: `<svg viewBox="0 0 100 100"><ellipse cx="35" cy="40" rx="20" ry="14" fill="#9AA8B8"/><ellipse cx="60" cy="38" rx="22" ry="16" fill="#B0BCC9"/><ellipse cx="50" cy="48" rx="26" ry="14" fill="#C2CCD6"/><g stroke="#5BA8E5" stroke-width="3" stroke-linecap="round"><line x1="35" y1="62" x2="33" y2="72"/><line x1="50" y1="64" x2="48" y2="74"/><line x1="65" y1="62" x2="63" y2="72"/></g></svg>`,
+};
+
+Object.assign(SVG, {
+  // 大橙子
+  bigOrange: `<svg viewBox="0 0 100 100"><circle cx="50" cy="60" r="32" fill="#FF9F1C"/><circle cx="42" cy="52" r="9" fill="#FFC56E" opacity="0.7"/><circle cx="58" cy="68" r="2" fill="#E07A00"/><circle cx="44" cy="72" r="2" fill="#E07A00"/><circle cx="60" cy="52" r="2" fill="#E07A00"/><rect x="47" y="22" width="6" height="12" fill="#8B5A2B" rx="2"/><ellipse cx="60" cy="26" rx="9" ry="5" fill="#5BC98C"/></svg>`,
+  // 小橙子
+  smallOrange: `<svg viewBox="0 0 100 100"><circle cx="50" cy="66" r="20" fill="#FF9F1C"/><circle cx="44" cy="60" r="5" fill="#FFC56E" opacity="0.7"/><circle cx="56" cy="72" r="1.5" fill="#E07A00"/><circle cx="44" cy="72" r="1.5" fill="#E07A00"/><rect x="48" y="42" width="4" height="10" fill="#8B5A2B" rx="2"/><ellipse cx="58" cy="44" rx="7" ry="4" fill="#5BC98C"/></svg>`,
+  // 两个大橙子
+  twoBigOranges: `<svg viewBox="0 0 140 100"><circle cx="45" cy="62" r="26" fill="#FF9F1C"/><circle cx="38" cy="55" r="6" fill="#FFC56E" opacity="0.7"/><rect x="42" y="32" width="5" height="12" fill="#8B5A2B" rx="2"/><ellipse cx="54" cy="34" rx="8" ry="5" fill="#5BC98C"/><circle cx="98" cy="66" r="22" fill="#FF9F1C"/><circle cx="92" cy="60" r="5" fill="#FFC56E" opacity="0.7"/><rect x="95" y="40" width="4" height="10" fill="#8B5A2B" rx="2"/><ellipse cx="105" cy="42" rx="7" ry="4" fill="#5BC98C"/></svg>`,
+  // 两个小橙子
+  twoSmallOranges: `<svg viewBox="0 0 140 100"><circle cx="45" cy="68" r="18" fill="#FF9F1C"/><circle cx="40" cy="62" r="4" fill="#FFC56E" opacity="0.7"/><rect x="43" y="46" width="4" height="10" fill="#8B5A2B" rx="2"/><ellipse cx="51" cy="48" rx="6" ry="3.5" fill="#5BC98C"/><circle cx="98" cy="70" r="16" fill="#FF9F1C"/><circle cx="93" cy="65" r="4" fill="#FFC56E" opacity="0.7"/><rect x="96" y="50" width="4" height="9" fill="#8B5A2B" rx="2"/><ellipse cx="104" cy="52" rx="6" ry="3.5" fill="#5BC98C"/></svg>`,
+  // 长铅笔
+  longPencil: `<svg viewBox="0 0 140 40"><rect x="5" y="14" width="110" height="14" fill="#FFD93D" rx="3" stroke="#E5B800" stroke-width="2"/><polygon points="115,14 135,21 115,28" fill="#F5DEB3" stroke="#C9A96A" stroke-width="2"/><polygon points="130,17 135,21 130,25" fill="#3A2E22"/><rect x="5" y="14" width="12" height="14" fill="#FF6B6B" rx="3"/></svg>`,
+  // 短铅笔
+  shortPencil: `<svg viewBox="0 0 140 40"><rect x="5" y="14" width="55" height="14" fill="#5BC98C" rx="3" stroke="#3FA86E" stroke-width="2"/><polygon points="60,14 78,21 60,28" fill="#F5DEB3" stroke="#C9A96A" stroke-width="2"/><polygon points="74,17 78,21 74,25" fill="#3A2E22"/><rect x="5" y="14" width="10" height="14" fill="#FF6B6B" rx="3"/></svg>`,
+  // 两把长铅笔
+  twoLongPencils: `<svg viewBox="0 0 140 80"><g transform="translate(0,5)"><rect x="5" y="14" width="110" height="14" fill="#FFD93D" rx="3" stroke="#E5B800" stroke-width="2"/><polygon points="115,14 135,21 115,28" fill="#F5DEB3" stroke="#C9A96A" stroke-width="2"/><polygon points="130,17 135,21 130,25" fill="#3A2E22"/><rect x="5" y="14" width="12" height="14" fill="#FF6B6B" rx="3"/></g><g transform="translate(0,42)"><rect x="5" y="14" width="110" height="14" fill="#FFD93D" rx="3" stroke="#E5B800" stroke-width="2"/><polygon points="115,14 135,21 115,28" fill="#F5DEB3" stroke="#C9A96A" stroke-width="2"/><polygon points="130,17 135,21 130,25" fill="#3A2E22"/><rect x="5" y="14" width="12" height="14" fill="#FF6B6B" rx="3"/></g></svg>`,
+  // 两把短铅笔
+  twoShortPencils: `<svg viewBox="0 0 140 80"><g transform="translate(0,5)"><rect x="5" y="14" width="55" height="14" fill="#5BC98C" rx="3" stroke="#3FA86E" stroke-width="2"/><polygon points="60,14 78,21 60,28" fill="#F5DEB3" stroke="#C9A96A" stroke-width="2"/><polygon points="74,17 78,21 74,25" fill="#3A2E22"/><rect x="5" y="14" width="10" height="14" fill="#FF6B6B" rx="3"/></g><g transform="translate(0,42)"><rect x="5" y="14" width="55" height="14" fill="#5BC98C" rx="3" stroke="#3FA86E" stroke-width="2"/><polygon points="60,14 78,21 60,28" fill="#F5DEB3" stroke="#C9A96A" stroke-width="2"/><polygon points="74,17 78,21 74,25" fill="#3A2E22"/><rect x="5" y="14" width="10" height="14" fill="#FF6B6B" rx="3"/></g></svg>`,
+  // 厚书
+  thickBook: `<svg viewBox="0 0 120 100"><rect x="20" y="20" width="80" height="65" fill="#5BA8E5" rx="4" stroke="#3A7FBF" stroke-width="3"/><rect x="20" y="20" width="12" height="65" fill="#3A7FBF" rx="4"/><line x1="42" y1="38" x2="88" y2="38" stroke="#fff" stroke-width="3"/><line x1="42" y1="52" x2="88" y2="52" stroke="#fff" stroke-width="3"/><line x1="42" y1="66" x2="70" y2="66" stroke="#fff" stroke-width="3"/></svg>`,
+  // 薄书
+  thinBook: `<svg viewBox="0 0 120 100"><rect x="20" y="50" width="80" height="35" fill="#FF9F5A" rx="4" stroke="#E56A1F" stroke-width="3"/><rect x="20" y="50" width="12" height="35" fill="#E56A1F" rx="4"/><line x1="42" y1="62" x2="88" y2="62" stroke="#fff" stroke-width="3"/><line x1="42" y1="74" x2="70" y2="74" stroke="#fff" stroke-width="3"/></svg>`,
+});
+
+/* ============================================================
+   Twemoji 恐龙图标（CDN 加载）
+   ============================================================ */
+function dinoImg(code, size){
+  return `<img src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/${code}.svg"
+    width="${size}" height="${size}" alt="dinosaur"
+    style="display:block;margin:0 auto;">`;
+}
+
+const DINO = {
+  carcharo: '1f996',    // 🦖 鲨齿龙（用小恐龙图标）
+  argentino: '1f995',   // 🦕 阿根廷龙（用长颈龙图标）
+};
+
+// 动物图标（Twemoji）
+function animalImg(code, size){
+  return `<img src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/${code}.svg"
+    width="${size}" height="${size}" alt="animal"
+    style="display:block;margin:0 auto;">`;
+}
+SVG.rabbit = animalImg('1f407', 110);
+SVG.leopard = animalImg('1f406', 110);
+
+// 鲨齿龙（小）：80px
+SVG.carcharoSmall = dinoImg(DINO.carcharo, 80);
+// 阿根廷龙（大）：150px
+SVG.argentinoBig  = dinoImg(DINO.argentino, 150);
+
+// 复数版：两个叠放
+SVG.twoCarcharo = `
+  <div style="position:relative;width:160px;height:130px;">
+    <div style="position:absolute;left:0;top:0;">${dinoImg(DINO.carcharo, 80)}</div>
+    <div style="position:absolute;left:60px;top:35px;">${dinoImg(DINO.carcharo, 80)}</div>
+  </div>`;
+SVG.twoArgentino = `
+  <div style="position:relative;width:160px;height:130px;">
+    <div style="position:absolute;left:0;top:0;">${dinoImg(DINO.argentino, 120)}</div>
+    <div style="position:absolute;left:60px;top:35px;">${dinoImg(DINO.argentino, 120)}</div>
+  </div>`;
+
+/* ============================================================
+   热身数据
+   ============================================================ */
+const warmupData = [
+  { level:1, left:{svg:SVG.redAppleBig, tag:'This apple'}, right:{svg:SVG.greenAppleSmall, tag:'That apple'}, sentence:'This apple is bigger than that apple.', highlight:'bigger' },
+  { level:1, left:{svg:SVG.blueRulerLong, tag:'This ruler'}, right:{svg:SVG.yellowRulerShort, tag:'That ruler'}, sentence:'This ruler is longer than that ruler.', highlight:'longer' },
+  { level:1,
+    left:{svg:SVG.carcharoSmall, tag:'This Carcharodontosaurus'},
+    right:{svg:SVG.argentinoBig, tag:'That Argentinosaurus'},
+    sentence:'This Carcharodontosaurus is lighter than that Argentinosaurus.',
+    highlight:'lighter' },
+  { level:2, left:{svg:SVG.twoRedApples, tag:'These apples'}, right:{svg:SVG.twoGreenApples, tag:'Those apples'}, sentence:'These apples are bigger than those apples.', highlight:'bigger' },
+  { level:2, left:{svg:SVG.twoBlueRulersLong, tag:'These rulers'}, right:{svg:SVG.twoYellowRulersShort, tag:'Those rulers'}, sentence:'These rulers are longer than those rulers.', highlight:'longer' },
+  { level:2,
+    left:{svg:SVG.twoCarcharo, tag:'These Carcharodontosauruses'},
+    right:{svg:SVG.twoArgentino, tag:'Those Argentinosauruses'},
+    sentence:'These Carcharodontosauruses are lighter than those Argentinosauruses.',
+    highlight:'lighter' },
+];
+
+/* ============================================================
+   G1 数据（看图选词）
+   ============================================================ */
+const game1Data = [
+  { level:1, left:{svg:SVG.greenAppleSmall, tag:'The green apple'}, right:{svg:SVG.redAppleBig, tag:'The red apple'}, sentence:'The green apple is ___ than the red apple.', answer:'smaller', options:['smaller','bigger','longer'], speak:'The green apple is smaller than the red apple.' },
+  { level:1, left:{svg:SVG.blueRulerLong, tag:'The blue ruler'}, right:{svg:SVG.yellowRulerShort, tag:'The yellow ruler'}, sentence:'The blue ruler is ___ than the yellow ruler.', answer:'longer', options:['longer','shorter','heavier'], speak:'The blue ruler is longer than the yellow ruler.' },
+  { level:1,
+    left:{svg:SVG.carcharoSmall, tag:'The Carcharodontosaurus'},
+    right:{svg:SVG.argentinoBig, tag:'The Argentinosaurus'},
+    sentence:'The Carcharodontosaurus is ___ than the Argentinosaurus.',
+    answer:'lighter',
+    options:['lighter','heavier','bigger'],
+    speak:'The Carcharodontosaurus is lighter than the Argentinosaurus.' },
+  { level:1, left:{svg:SVG.sun, tag:'The sunny day'}, right:{svg:SVG.rainCloud, tag:'The rainy day'}, sentence:'The sunny day is ___ than the rainy day.', answer:'better', options:['better','worse','bigger'], speak:'The sunny day is better than the rainy day.' },
+  { level:2, left:{svg:SVG.twoGreenApples, tag:'The green apples'}, right:{svg:SVG.twoRedApples, tag:'The red apples'}, sentence:'The green apples are ___ than the red apples.', answer:'smaller', options:['smaller','bigger','shorter'], speak:'The green apples are smaller than the red apples.' },
+  { level:2, left:{svg:SVG.twoBlueRulersLong, tag:'The blue rulers'}, right:{svg:SVG.twoYellowRulersShort, tag:'The yellow rulers'}, sentence:'The blue rulers are ___ than the yellow rulers.', answer:'longer', options:['longer','shorter','lighter'], speak:'The blue rulers are longer than the yellow rulers.' },
+  { level:2,
+    left:{svg:SVG.twoCarcharo, tag:'The Carcharodontosauruses'},
+    right:{svg:SVG.twoArgentino, tag:'The Argentinosauruses'},
+    sentence:'The Carcharodontosauruses are ___ than the Argentinosauruses.',
+    answer:'lighter',
+    options:['taller','bigger','lighter'],
+    speak:'The Carcharodontosauruses are lighter than the Argentinosauruses.' },
+  { level:2, left:{svg:SVG.sun, tag:'The sunny days'}, right:{svg:SVG.rainCloud, tag:'The rainy days'}, sentence:'The sunny days are ___ than the rainy days.', answer:'better', options:['better','worse','bigger'], speak:'The sunny days are better than the rainy days.' },
+];
+
+/* ============================================================
+   奖励贴纸
+   ============================================================ */
+const stickerData = [
+  { id:'warmup1', emoji:'🍎', word:'bigger' },
+  { id:'warmup2', emoji:'📏', word:'longer' },
+  { id:'warmup3', emoji:'🦕', word:'lighter' },
+  { id:'game1_1', emoji:'☀️', word:'better' },
+  { id:'game1_2', emoji:'🍏', word:'smaller' },
+  { id:'game1_3', emoji:'✏️', word:'shorter' },
+  { id:'game1_4', emoji:'🪶', word:'lighter' },
+  { id:'game1_5', emoji:'🌧️', word:'worse' },
+];
+
+/* ============================================================
+   热身逻辑
+   ============================================================ */
+let currentWarmupSentence = '';
+
+function renderWarmup(){
+  const idx = state.warmupIndex;
+  const item = warmupData[idx];
+  currentWarmupSentence = item.sentence;
+
+  document.getElementById('warmup-progress').style.width = ((idx+1)/warmupData.length*100)+'%';
+  document.getElementById('warmup-progress-text').textContent = `第 ${idx+1} / ${warmupData.length} 题 · Level ${item.level}`;
+
+  const stage = document.getElementById('warmup-stage');
+  stage.innerHTML = `
+    <div class="compare-item" onclick="speakCurrent()">
+      <div class="tag">${item.left.tag}</div>${item.left.svg}
+    </div>
+    <div class="vs-badge">VS</div>
+    <div class="compare-item" onclick="speakCurrent()">
+      <div class="tag">${item.right.tag}</div>${item.right.svg}
+    </div>
+  `;
+
+  document.getElementById('warmup-sentence').innerHTML =
+    item.sentence.replace(item.highlight, `<span class="hl">${item.highlight}</span>`);
+
+  speak(item.sentence);
+  if(idx < 3) earnSticker('warmup'+(idx+1));
+}
+
+function speakCurrent(){ speak(currentWarmupSentence); }
+
+function nextWarmup(){
+  if(state.warmupIndex < warmupData.length - 1){
+    state.warmupIndex++;
+    renderWarmup();
+  } else {
+    showToast('🎉 热身完成！去玩点一点吧！');
+    setTimeout(()=>go('game1'), 800);
+  }
+}
+function prevWarmup(){
+  if(state.warmupIndex > 0){ state.warmupIndex--; renderWarmup(); }
+}
+
+/* ============================================================
+   G1 逻辑
+   ============================================================ */
+let currentGame1Sentence = '';
+
+function renderGame1(){
+  const idx = state.game1Index;
+  const item = game1Data[idx];
+  state.game1Answered = false;
+  currentGame1Sentence = item.speak;
+
+  document.getElementById('game1-progress').style.width = ((idx+1)/game1Data.length*100)+'%';
+  document.getElementById('game1-progress-text').textContent = `第 ${idx+1} / ${game1Data.length} 题 · Level ${item.level} · 得分 ${state.game1Score}`;
+
+  const qBox = document.getElementById('game1-question');
+  qBox.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;margin-bottom:14px;">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+        <div style="font-size:13px;font-weight:bold;color:#8A7A66;background:#F2E9DA;padding:3px 10px;border-radius:10px;">${item.left.tag}</div>
+        ${item.left.svg}
+      </div>
+      <div style="font-size:22px;font-weight:bold;color:#FF8A3D;">VS</div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+        <div style="font-size:13px;font-weight:bold;color:#8A7A66;background:#F2E9DA;padding:3px 10px;border-radius:10px;">${item.right.tag}</div>
+        ${item.right.svg}
+      </div>
+    </div>
+    <div style="font-size:clamp(16px,2.8vw,22px);line-height:1.6;">${item.sentence.replace('___','<span class="blank">?</span>')}</div>
+  `;
+
+  const optBox = document.getElementById('game1-options');
+  optBox.innerHTML = '';
+  optBox.style.gridTemplateColumns = `repeat(${Math.min(item.options.length,4)},1fr)`;
+  [...item.options].sort(()=>Math.random()-0.5).forEach(word=>{
+    const card = document.createElement('div');
+    card.className = 'option-card';
+    card.style.padding = '20px 12px';
+    card.innerHTML = `<div class="opt-label" style="font-size:clamp(18px,3vw,24px);">${word}</div>`;
+    card.onclick = ()=>chooseGame1(card, word, item);
+    optBox.appendChild(card);
+  });
+
+  speak(item.speak);
+}
+
+function chooseGame1(card, word, item){
+  if(state.game1Answered) return;
+  state.game1Answered = true;
+
+  if(word === item.answer){
+    card.classList.add('correct');
+    state.game1Score++;
+    showToast('✅ 太棒了！');
+    speak(item.speak);
+    earnSticker('game1_'+((state.game1Index%5)+1));
+    setTimeout(()=>{
+      if(state.game1Index < game1Data.length - 1){
+        state.game1Index++;
+        renderGame1();
+      } else {
+        showToast(`🏆 全部完成！得分 ${state.game1Score} / ${game1Data.length}`);
+        setTimeout(()=>go('reward'), 1000);
+      }
+    }, 1200);
+  } else {
+    card.classList.add('wrong');
+    showToast('❌ 再想一想～');
+    setTimeout(()=>{ card.classList.remove('wrong'); state.game1Answered = false; }, 800);
+  }
+}
+
+function speakGame1(){ speak(currentGame1Sentence); }
+function resetGame1(){
+  state.game1Index = 0; state.game1Score = 0;
+  renderGame1();
+  showToast('🔄 重新开始！');
+}
+
+/* ============================================================
+   奖励
+   ============================================================ */
+function earnSticker(id){
+  if(!state.earnedStickers.includes(id)){
+    state.earnedStickers.push(id);
+    localStorage.setItem('comparative_stickers', JSON.stringify(state.earnedStickers));
+  }
+}
+function renderRewards(){
+  const grid = document.getElementById('reward-grid');
+  grid.innerHTML = '';
+  stickerData.forEach(s=>{
+    const div = document.createElement('div');
+    const earned = state.earnedStickers.includes(s.id);
+    div.className = 'sticker'+(earned?' earned':'');
+    div.innerHTML = `<div class="emoji">${s.emoji}</div><div class="word">${s.word}</div>`;
+    grid.appendChild(div);
+  });
+}
+function resetRewards(){
+  state.earnedStickers = [];
+  localStorage.removeItem('comparative_stickers');
+  renderRewards();
+  showToast('🔄 贴纸已清空');
+}
+
+/* ============================================================
+   初始化
+   ============================================================ */
+renderWarmup();
+renderGame1();
+renderRewards();
+
+/* ============================================================
+   G2 拖一拖 · 数据
+   ============================================================ */
+const game2Data = [
+  {
+    level: 2,
+    left:  { svg: SVG.twoRedApples,   tag: 'These apples' },
+    right: { svg: SVG.twoGreenApples, tag: 'Those apples' },
+    before: 'These apples are',
+    after: 'than those apples.',
+    answer: 'bigger',
+    pool: ['bigger', 'smaller'],
+    speak: 'These apples are bigger than those apples.'
+  },
+  {
+    level: 2,
+    left:  { svg: SVG.twoBlueRulersLong,   tag: 'These rulers' },
+    right: { svg: SVG.twoYellowRulersShort, tag: 'Those rulers' },
+    before: 'These rulers are',
+    after: 'than those rulers.',
+    answer: 'longer',
+    pool: ['longer', 'shorter'],
+    speak: 'These rulers are longer than those rulers.'
+  },
+  {
+    level: 3,
+    left:  { svg: SVG.sun,       tag: 'Beijing ☀️' },
+    right: { svg: SVG.rainCloud, tag: 'Shanghai 🌧️' },
+    before: 'The weather of Beijing is',
+    after: 'than that of Shanghai.',
+    answer: 'better',
+    pool: ['better', 'worse'],
+    speak: 'The weather of Beijing is better than that of Shanghai.'
+  },
+  {
+    level: 3,
+    left:  { svg: animalImg('1f992', 110), tag: 'The giraffe 🦒' },
+    right: { svg: animalImg('1f40e', 110), tag: 'The horse 🐴' },
+    before: 'The neck of the giraffe is',
+    after: 'than that of the horse.',
+    answer: 'longer',
+    pool: ['longer', 'shorter'],
+    speak: 'The neck of the giraffe is longer than that of the horse.'
+  },
+  {
+    level: 3,
+    left:  { svg: animalImg('1f418', 110), tag: 'The elephant 🐘' },
+    right: { svg: animalImg('1f981', 110), tag: 'The lion 🦁' },
+    before: 'The elephant is',
+    after: 'than the lion.',
+    answer: 'heavier',
+    pool: ['heavier', 'lighter'],
+    speak: 'The elephant is heavier than the lion.'
+  },
+  {
+    level: 4,
+    left:  { svg: SVG.twoLongPencils,  tag: 'The pencils in this box' },
+    right: { svg: SVG.twoShortPencils, tag: 'The pencils in that box' },
+    before: 'The pencils in this box are',
+    after: 'than those in that box.',
+    answer: 'longer',
+    pool: ['longer', 'shorter'],
+    speak: 'The pencils in this box are longer than those in that box.'
+  },
+  {
+    level: 4,
+    left:  { svg: SVG.twoBigOranges,   tag: 'The oranges of Sunny Town' },
+    right: { svg: SVG.twoSmallOranges, tag: 'The oranges of Rainy Town' },
+    before: 'The oranges of Sunny Town are',
+    after: 'than those of Rainy Town.',
+    answer: 'bigger',
+    pool: ['bigger', 'smaller'],
+    speak: 'The oranges of Sunny Town are bigger than those of Rainy Town.'
+  },
+  {
+    level: 4,
+    left:  { svg: SVG.blueRulerLong,   tag: 'The rulers in this box' },
+    right: { svg: SVG.yellowRulerShort, tag: 'The rulers in that box' },
+    before: 'The rulers in this box are',
+    after: 'than those in that box.',
+    answer: 'longer',
+    pool: ['longer', 'shorter'],
+    speak: 'The rulers in this box are longer than those in that box.'
+  },
+];
+/* ============================================================
+   G2 拖一拖 · 逻辑
+   ============================================================ */
+let currentGame2Sentence = '';
+let game2Placed = false;
+
+function renderGame2(){
+  const idx = state.game2Index;
+  const item = game2Data[idx];
+  currentGame2Sentence = item.speak;
+  game2Placed = false;
+
+  document.getElementById('game2-progress').style.width =
+    ((idx + 1) / game2Data.length * 100) + '%';
+  document.getElementById('game2-progress-text').textContent =
+    `第 ${idx + 1} / ${game2Data.length} 题 · Level ${item.level}`;
+
+  // 题干：加图
+  document.getElementById('game2-question').innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;margin-bottom:14px;">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+        <div style="font-size:13px;font-weight:bold;color:#8A7A66;background:#F2E9DA;padding:3px 10px;border-radius:10px;">${item.left.tag}</div>
+        ${item.left.svg}
+      </div>
+      <div style="font-size:22px;font-weight:bold;color:#FF8A3D;">VS</div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+        <div style="font-size:13px;font-weight:bold;color:#8A7A66;background:#F2E9DA;padding:3px 10px;border-radius:10px;">${item.right.tag}</div>
+        ${item.right.svg}
+      </div>
+    </div>
+  `;
+
+  // 拖拽池
+  const pool = document.getElementById('game2-pool');
+  pool.innerHTML = '';
+  [...item.pool].sort(()=>Math.random()-0.5).forEach(word=>{
+    const chip = document.createElement('div');
+    chip.className = 'drag-chip';
+    chip.textContent = word;
+    chip.draggable = true;
+    chip.dataset.word = word;
+    chip.style.cssText = `
+      background:#fff;padding:14px 26px;border-radius:16px;
+      font-size:clamp(18px,3vw,24px);font-weight:bold;color:#E56A1F;
+      box-shadow:0 4px 0 rgba(0,0,0,0.15);cursor:grab;user-select:none;
+      border:3px solid #FFD9A8;
+    `;
+    chip.addEventListener('dragstart', e=>{ e.dataTransfer.setData('text/plain', word); });
+    chip.addEventListener('click', ()=>placeGame2(word, chip));
+    pool.appendChild(chip);
+  });
+
+  // 句子填空区
+  const sent = document.getElementById('game2-sentence');
+  sent.innerHTML = `
+    <span>${item.before}</span>
+    <span id="game2-drop" class="drop-zone"
+      style="display:inline-block;min-width:120px;padding:6px 18px;margin:0 8px;
+      border:3px dashed #FF8A3D;border-radius:14px;background:#fff;
+      color:#E56A1F;font-weight:bold;">?</span>
+    <span>${item.after}</span>
+  `;
+
+  const drop = document.getElementById('game2-drop');
+  drop.addEventListener('dragover', e=>e.preventDefault());
+  drop.addEventListener('drop', e=>{
+    e.preventDefault();
+    const word = e.dataTransfer.getData('text/plain');
+    placeGame2(word, null);
+  });
+
+  speak(item.speak);
+}
+
+function placeGame2(word, chipEl){
+  if(game2Placed) return;
+  const item = game2Data[state.game2Index];
+  const drop = document.getElementById('game2-drop');
+
+  if(word === item.answer){
+    game2Placed = true;
+    drop.textContent = word;
+    drop.style.borderStyle = 'solid';
+    drop.style.borderColor = '#5BC98C';
+    drop.style.background = '#E8F8EE';
+    if(chipEl) chipEl.style.display = 'none';
+    showToast('✅ 太棒了！');
+    speak(item.speak);
+    earnSticker('game2_' + ((state.game2Index % 5) + 1));
+
+    setTimeout(()=>{
+      if(state.game2Index < game2Data.length - 1){
+        state.game2Index++;
+        renderGame2();
+      } else {
+        showToast('🎉 拖一拖全部完成！');
+        setTimeout(()=>go('game3'), 1000);
+      }
+    }, 1400);
+  } else {
+    // 答错：抖动提示
+    drop.style.borderColor = '#FF6B6B';
+    drop.textContent = word;
+    drop.style.animation = 'shake .4s';
+    showToast('❌ 再想一想～');
+    setTimeout(()=>{
+      drop.textContent = '?';
+      drop.style.borderColor = '#FF8A3D';
+      drop.style.animation = '';
+    }, 800);
+  }
+}
+
+function speakGame2(){ speak(currentGame2Sentence); }
+function resetGame2(){
+  state.game2Index = 0;
+  renderGame2();
+  showToast('🔄 重新开始！');
+}
+
+/* ============================================================
+   G3 变一变 · 数据（词汇辨析 + those of）
+   ============================================================ */
+const game3Data = [
+  {
+    level: 3,
+    sentence: 'The weather of Sanya is ___ than that of Harbin.',
+    answer: 'better',
+    options: ['better', 'worse', 'bigger'],
+    speak: 'The weather of Sanya is better than that of Harbin.'
+  },
+  {
+    level: 3,
+    sentence: 'The mouse is ___ than the cat.',
+    answer: 'smaller',
+    options: ['smaller', 'bigger', 'longer'],
+    speak: 'The mouse is smaller than the cat.'
+  },
+  {
+    level: 3,
+    sentence: 'The body of the elephant is ___ than that of the lion.',
+    answer: 'heavier',
+    options: ['heavier', 'lighter', 'shorter'],
+    speak: 'The body of the elephant is heavier than that of the lion.'
+  },
+  {
+    level: 4,
+    sentence: 'The days in summer are ___ than those in winter.',
+    answer: 'better',
+    options: ['better', 'worse', 'smaller'],
+    speak: 'The days in summer are better than those in winter.'
+  },
+];
+
+/* ============================================================
+   G3 变一变 · 逻辑
+   ============================================================ */
+let currentGame3Sentence = '';
+
+function renderGame3(){
+  const idx = state.game3Index;
+  const item = game3Data[idx];
+  state.game3Answered = false;
+  currentGame3Sentence = item.speak;
+
+  document.getElementById('game3-progress').style.width =
+    ((idx + 1) / game3Data.length * 100) + '%';
+  document.getElementById('game3-progress-text').textContent =
+    `第 ${idx + 1} / ${game3Data.length} 题 · Level ${item.level}`;
+
+  document.getElementById('game3-question').innerHTML =
+    item.sentence.replace('___', '<span class="blank">?</span>');
+
+  const optBox = document.getElementById('game3-options');
+  optBox.innerHTML = '';
+  optBox.style.gridTemplateColumns = `repeat(${Math.min(item.options.length, 4)}, 1fr)`;
+  [...item.options].sort(()=>Math.random()-0.5).forEach(word=>{
+    const card = document.createElement('div');
+    card.className = 'option-card';
+    card.style.padding = '20px 12px';
+    card.innerHTML = `<div class="opt-label" style="font-size:clamp(18px,3vw,24px);">${word}</div>`;
+    card.onclick = ()=>chooseGame3(card, word, item);
+    optBox.appendChild(card);
+  });
+
+  speak(item.speak);
+}
+
+function chooseGame3(card, word, item){
+  if(state.game3Answered) return;
+  state.game3Answered = true;
+
+  if(word === item.answer){
+    card.classList.add('correct');
+    state.game3Score++;
+    showToast('✅ 太棒了！');
+    speak(item.speak);
+    earnSticker('game3_' + ((state.game3Index % 5) + 1));
+    setTimeout(()=>{
+      if(state.game3Index < game3Data.length - 1){
+        state.game3Index++;
+        renderGame3();
+      } else {
+        showToast(`🏆 变一变完成！得分 ${state.game3Score} / ${game3Data.length}`);
+        setTimeout(()=>go('game4'), 1000);
+      }
+    }, 1200);
+  } else {
+    card.classList.add('wrong');
+    showToast('❌ 再想一想～');
+    setTimeout(()=>{ card.classList.remove('wrong'); state.game3Answered = false; }, 800);
+  }
+}
+
+function speakGame3(){ speak(currentGame3Sentence); }
+function resetGame3(){
+  state.game3Index = 0; state.game3Score = 0;
+  renderGame3();
+  showToast('🔄 重新开始！');
+}
+
+/* ============================================================
+   G4 说一说 · 数据
+   ============================================================ */
+const game4Data = [
+  { sentence: 'The green apple is smaller than the red apple.', hint: '🍏 vs 🍎' },
+  { sentence: 'The blue ruler is longer than the yellow ruler.', hint: '📏 蓝 vs 黄' },
+  { sentence: 'The Carcharodontosaurus is lighter than the Argentinosaurus.', hint: '🦖 vs 🦕' },
+  { sentence: 'The sunny day is better than the rainy day.', hint: '☀️ vs 🌧️' },
+  { sentence: 'These apples are bigger than those apples.', hint: '🍎🍎 vs 🍏🍏' },
+];
+
+/* ============================================================
+   G4 说一说 · 逻辑（录音 + 回放）
+   ============================================================ */
+let currentGame4Sentence = '';
+let mediaRecorder = null;
+let audioChunks = [];
+let recordedBlob = null;
+let isRecording = false;
+
+function renderGame4(){
+  const idx = state.game4Index;
+  const item = game4Data[idx];
+  currentGame4Sentence = item.sentence;
+  recordedBlob = null;
+
+  document.getElementById('game4-progress').style.width =
+    ((idx + 1) / game4Data.length * 100) + '%';
+  document.getElementById('game4-progress-text').textContent =
+    `第 ${idx + 1} / ${game4Data.length} 题`;
+
+  document.getElementById('game4-question').innerHTML = `
+    <div style="font-size:36px;margin-bottom:10px;">${item.hint}</div>
+    <div style="font-size:clamp(18px,3vw,26px);font-weight:bold;color:#E56A1F;">
+      ${item.sentence}
+    </div>
+    <div style="font-size:15px;color:#8A7A66;margin-top:12px;">
+      点 🔊 听原句，再点 🎤 跟读录音
+    </div>
+  `;
+
+  document.getElementById('game4-status').textContent = '';
+  document.getElementById('game4-play-btn').disabled = true;
+  document.getElementById('game4-record-btn').textContent = '🎤 开始录音';
+
+  speak(item.sentence);
+}
+
+function speakGame4(){ speak(currentGame4Sentence); }
+
+async function toggleRecord(){
+  if(isRecording){
+    // 停止录音
+    mediaRecorder.stop();
+    isRecording = false;
+    document.getElementById('game4-record-btn').textContent = '🎤 开始录音';
+    return;
+  }
+
+  // 检查浏览器支持
+  if(!navigator.mediaDevices || !window.MediaRecorder){
+    document.getElementById('game4-status').textContent =
+      '⚠️ 当前浏览器不支持录音，请用 Chrome / Edge / Safari 最新版。';
+    return;
+  }
+
+  try{
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    audioChunks = [];
+    mediaRecorder = new MediaRecorder(stream);
+
+    mediaRecorder.ondataavailable = e=>{
+      if(e.data.size > 0) audioChunks.push(e.data);
+    };
+
+    mediaRecorder.onstop = ()=>{
+      recordedBlob = new Blob(audioChunks, { type: 'audio/webm' });
+      document.getElementById('game4-play-btn').disabled = false;
+      document.getElementById('game4-status').textContent = '✅ 录音完成！点 ▶️ 播放听听看。';
+      stream.getTracks().forEach(t=>t.stop());
+    };
+
+    mediaRecorder.start();
+    isRecording = true;
+    document.getElementById('game4-record-btn').textContent = '⏹ 停止录音';
+    document.getElementById('game4-status').textContent = '🔴 正在录音...';
+  } catch(err){
+    document.getElementById('game4-status').textContent =
+      '⚠️ 无法访问麦克风。iPad 上请用 HTTPS 或 localhost 打开。';
+    console.error(err);
+  }
+}
+
+function playRecording(){
+  if(!recordedBlob) return;
+  const url = URL.createObjectURL(recordedBlob);
+  const audio = new Audio(url);
+  audio.play();
+  audio.onended = ()=>URL.revokeObjectURL(url);
+}
+
+function nextGame4(){
+  if(state.game4Index < game4Data.length - 1){
+    state.game4Index++;
+    renderGame4();
+  } else {
+    showToast('🎉 说一说全部完成！');
+    setTimeout(()=>go('challenge'), 1000);
+  }
+}
+
+function resetGame4(){
+  state.game4Index = 0;
+  renderGame4();
+  showToast('🔄 重新开始！');
+}
+
+/* ============================================================
+   闯关挑战 · 数据（混合所有 Level）
+   ============================================================ */
+const challengeData = [
+  // 有图（6题）
+  { level:1, left:{svg:SVG.redAppleBig, tag:'This apple'}, right:{svg:SVG.greenAppleSmall, tag:'That apple'},
+    sentence:'This apple is ___ than that apple.', answer:'bigger', options:['bigger','smaller','longer'],
+    speak:'This apple is bigger than that apple.' },
+  { level:1, left:{svg:SVG.blueRulerLong, tag:'The blue ruler'}, right:{svg:SVG.yellowRulerShort, tag:'The yellow ruler'},
+    sentence:'The blue ruler is ___ than the yellow ruler.', answer:'longer', options:['longer','shorter','better'],
+    speak:'The blue ruler is longer than the yellow ruler.' },
+  { level:1, left:{svg:SVG.carcharoSmall, tag:'The Carcharodontosaurus'}, right:{svg:SVG.argentinoBig, tag:'The Argentinosaurus'},
+    sentence:'The Carcharodontosaurus is ___ than the Argentinosaurus.', answer:'lighter', options:['lighter','heavier','bigger'],
+    speak:'The Carcharodontosaurus is lighter than the Argentinosaurus.' },
+  { level:2, left:{svg:SVG.sun, tag:'The sunny days ☀️'}, right:{svg:SVG.rainCloud, tag:'The rainy days 🌧️'},
+    sentence:'The sunny days are ___ than the rainy days.', answer:'better', options:['better','worse','bigger'],
+    speak:'The sunny days are better than the rainy days.' },
+  { level:1, left:{svg:SVG.thickBook, tag:'This book'}, right:{svg:SVG.thinBook, tag:'That book'},
+    sentence:'This book is ___ than that book.', answer:'thicker', options:['thicker','thinner','longer'],
+    speak:'This book is thicker than that book.' },
+  { level:1, left:{svg:SVG.rabbit, tag:'The rabbit 🐰'}, right:{svg:SVG.leopard, tag:'The leopard 🐆'},
+    sentence:'The rabbit runs ___ than the leopard.', answer:'slower', options:['slower','faster','longer'],
+    speak:'The rabbit runs slower than the leopard.' },
+  // 无图（4题，常识/上下文）
+  { level:1, noImage:true,
+    sentence:'My grandpa is ___ than me.', answer:'older', options:['older','younger','bigger'],
+    speak:'My grandpa is older than me.' },
+  { level:1, noImage:true,
+    sentence:'The baby is ___ than my brother.', answer:'younger', options:['younger','older','smaller'],
+    speak:'The baby is younger than my brother.' },
+  { level:3, noImage:true,
+    sentence:'The weather of Sanya is ___ than that of Harbin.', answer:'better', options:['better','worse','bigger'],
+    speak:'The weather of Sanya is better than that of Harbin.' },
+  { level:3, noImage:true,
+    sentence:'The neck of the giraffe is ___ than that of the horse.', answer:'longer', options:['longer','shorter','lighter'],
+    speak:'The neck of the giraffe is longer than that of the horse.' },
+];
+
+/* ============================================================
+   闯关挑战 · 逻辑
+   ============================================================ */
+let currentChallengeSentence = '';
+
+function renderChallenge(){
+  const idx = state.challengeIndex;
+  const item = challengeData[idx];
+  state.challengeAnswered = false;
+  currentChallengeSentence = item.speak;
+
+  document.getElementById('challenge-progress').style.width =
+    ((idx + 1) / challengeData.length * 100) + '%';
+  document.getElementById('challenge-progress-text').textContent =
+    `第 ${idx + 1} / ${challengeData.length} 题 · Level ${item.level} · 得分 ${state.challengeScore}`;
+
+  // 题干：有图则显示图，无图则只显示句子
+  let qHTML = '';
+  if(!item.noImage && item.left && item.right){
+    qHTML += `
+      <div style="display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;margin-bottom:14px;">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+          <div style="font-size:13px;font-weight:bold;color:#8A7A66;background:#F2E9DA;padding:3px 10px;border-radius:10px;">${item.left.tag}</div>
+          ${item.left.svg}
+        </div>
+        <div style="font-size:22px;font-weight:bold;color:#FF8A3D;">VS</div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+          <div style="font-size:13px;font-weight:bold;color:#8A7A66;background:#F2E9DA;padding:3px 10px;border-radius:10px;">${item.right.tag}</div>
+          ${item.right.svg}
+        </div>
+      </div>
+    `;
+  }
+  qHTML += `<div style="font-size:clamp(16px,2.8vw,22px);line-height:1.6;">${item.sentence.replace('___','<span class="blank">?</span>')}</div>`;
+  document.getElementById('challenge-question').innerHTML = qHTML;
+
+  const optBox = document.getElementById('challenge-options');
+  optBox.innerHTML = '';
+  optBox.style.gridTemplateColumns = `repeat(${Math.min(item.options.length, 4)}, 1fr)`;
+  [...item.options].sort(()=>Math.random()-0.5).forEach(word=>{
+    const card = document.createElement('div');
+    card.className = 'option-card';
+    card.style.padding = '20px 12px';
+    card.innerHTML = `<div class="opt-label" style="font-size:clamp(18px,3vw,24px);">${word}</div>`;
+    card.onclick = ()=>chooseChallenge(card, word, item);
+    optBox.appendChild(card);
+  });
+
+  speak(item.speak);
+}
+
+function chooseChallenge(card, word, item){
+  if(state.challengeAnswered) return;
+  state.challengeAnswered = true;
+
+  if(word === item.answer){
+    card.classList.add('correct');
+    state.challengeScore++;
+    showToast('✅ 太棒了！');
+    speak(item.speak);
+    earnSticker('challenge_' + ((state.challengeIndex % 5) + 1));
+    setTimeout(()=>{
+      if(state.challengeIndex < challengeData.length - 1){
+        state.challengeIndex++;
+        renderChallenge();
+      } else {
+        showToast(`🏆 闯关完成！得分 ${state.challengeScore} / ${challengeData.length}`);
+        setTimeout(()=>go('reward'), 1200);
+      }
+    }, 1200);
+  } else {
+    card.classList.add('wrong');
+    showToast('❌ 再想一想～');
+    setTimeout(()=>{ card.classList.remove('wrong'); state.challengeAnswered = false; }, 800);
+  }
+}
+
+function speakChallenge(){ speak(currentChallengeSentence); }
+function resetChallenge(){
+  state.challengeIndex = 0; state.challengeScore = 0;
+  renderChallenge();
+  showToast('🔄 重新开始！');
+}
+
+/* ============================================================
+   扩展 state（在原来 state 对象里追加这些字段）
+   ============================================================ */
+// 注意：因为 state 已经在前面定义过了，这里用 Object.assign 追加
+Object.assign(state, {
+  game2Index: 0,
+  game3Index: 0,
+  game3Score: 0,
+  game3Answered: false,
+  game4Index: 0,
+  challengeIndex: 0,
+  challengeScore: 0,
+  challengeAnswered: false,
+});
+
+/* ============================================================
+   扩展 go() 路由（覆盖原来的 go 函数）
+   ============================================================ */
+function go(name){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+name).classList.add('active');
+  document.querySelectorAll('.nav-btns button').forEach(b=>{
+    b.classList.toggle('active', b.dataset.screen===name);
+  });
+  if(name==='reward') renderRewards();
+  if(name==='warmup') renderWarmup();
+  if(name==='game1') renderGame1();
+  if(name==='game2') renderGame2();
+  if(name==='game3') renderGame3();
+  if(name==='game4') renderGame4();
+  if(name==='challenge') renderChallenge();
+}
+
+/* ============================================================
+   初始化新游戏
+   ============================================================ */
+renderGame2();
+renderGame3();
+renderGame4();
+renderChallenge();
+</script>
+</body>
+</html>
