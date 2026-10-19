@@ -463,7 +463,7 @@ function renderWarmup(){
   document.getElementById('warmup-sentence').innerHTML =
     item.sentence.replace(item.highlight, `<span class="hl">${item.highlight}</span>`);
 
-  speak(item.sentence);
+  // speak(item.sentence);
   if(idx < 3) earnSticker('warmup'+(idx+1));
 }
 
@@ -524,7 +524,7 @@ function renderGame1(){
     optBox.appendChild(card);
   });
 
-  speak(item.speak);
+  // speak(item.speak);
 }
 
 function chooseGame1(card, word, item){
@@ -535,7 +535,6 @@ function chooseGame1(card, word, item){
     card.classList.add('correct');
     state.game1Score++;
     showToast('✅ 太棒了！');
-    speak(item.speak);
     earnSticker('game1_'+((state.game1Index%5)+1));
     setTimeout(()=>{
       if(state.game1Index < game1Data.length - 1){
@@ -750,7 +749,7 @@ function renderGame2(){
     placeGame2(word, null);
   });
 
-  speak(item.speak);
+  // speak(item.speak);
 }
 
 function placeGame2(word, chipEl){
@@ -766,7 +765,6 @@ function placeGame2(word, chipEl){
     drop.style.background = '#E8F8EE';
     if(chipEl) chipEl.style.display = 'none';
     showToast('✅ 太棒了！');
-    speak(item.speak);
     earnSticker('game2_' + ((state.game2Index % 5) + 1));
 
     setTimeout(()=>{
@@ -864,7 +862,7 @@ function renderGame3(){
     optBox.appendChild(card);
   });
 
-  speak(item.speak);
+  // speak(item.speak);
 }
 
 function chooseGame3(card, word, item){
@@ -875,7 +873,6 @@ function chooseGame3(card, word, item){
     card.classList.add('correct');
     state.game3Score++;
     showToast('✅ 太棒了！');
-    speak(item.speak);
     earnSticker('game3_' + ((state.game3Index % 5) + 1));
     setTimeout(()=>{
       if(state.game3Index < game3Data.length - 1){
@@ -1103,7 +1100,7 @@ function renderChallenge(){
     optBox.appendChild(card);
   });
 
-  speak(item.speak);
+  // speak(item.speak);
 }
 
 function chooseChallenge(card, word, item){
@@ -1114,7 +1111,6 @@ function chooseChallenge(card, word, item){
     card.classList.add('correct');
     state.challengeScore++;
     showToast('✅ 太棒了！');
-    speak(item.speak);
     earnSticker('challenge_' + ((state.challengeIndex % 5) + 1));
     setTimeout(()=>{
       if(state.challengeIndex < challengeData.length - 1){
